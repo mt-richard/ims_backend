@@ -2,14 +2,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('inventory_items', {
+    await queryInterface.createTable('item_master', {
       item_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      category: {
+      item_category: {
         type: Sequelize.INTEGER,
         references: {
           model: 'sub_categories', 
@@ -44,13 +44,12 @@ module.exports = {
         onDelete: 'SET NULL'
       },
       location: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'locations', 
-          key: 'location_id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        type: Sequelize.JSON,
+        defaultValue: []
+      },
+      asset_id: {
+        type: Sequelize.STRING,
+        unique: true
       },
       status: {
         type: Sequelize.ENUM('active', 'inactive'),
@@ -86,6 +85,6 @@ module.exports = {
           });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('inventory_items');
+    await queryInterface.dropTable('item_master');
   }
 };

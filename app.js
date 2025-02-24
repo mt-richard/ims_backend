@@ -16,7 +16,7 @@ app.use('/suppliers', require('./routes/suppliers'))
 app.use('/item_category', require('./routes/item_category'))
 app.use('/sub_category', require('./routes/sub_category'))
 app.use('/divisions', require('./routes/divisions'))
-app.use('/inventory_items', require('./routes/inventory_items'))
+app.use('/item_master', require('./routes/item_master'))
 app.use('/stock_movement', require('./routes/stock_movement'))
 app.use('/adjust_reason', require('./routes/adjust_reason'))
 app.use('/stock_adjustment', require('./routes/stock_adjustment'))
@@ -24,6 +24,7 @@ app.use('/purchase_entry', require('./routes/purchase_entry'))
 app.use('/item_transaction', require('./routes/item_transaction'))
 app.use('/stock_movements', require('./routes/stock_movements'))
 app.use('/item_assign', require('./routes/item_assign'))
+app.use('/item_details', require('./routes/item_details'))
 
 app.get('/', (req, res) =>{
     res.send('Welcome to ABG I.T Inventory MS API.');

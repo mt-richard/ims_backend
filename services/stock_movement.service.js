@@ -1,16 +1,16 @@
-const { stock_movements, inventory_items, locations, users } = require('../models');
+const { stock_movements, item_master, locations, users } = require('../models');
 
 exports.getAllItemsMovement = async () => {
   try {
     const items = await stock_movements.findAll({
       include: [
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['item_name'], 
         },
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['unit'], 
         },
@@ -85,7 +85,7 @@ exports.getByName = async (name) => {
 exports.createItemsMovement = async (data) => {
   try {
     const { item_id, quantity, movement_type, source_location, destination_location } = data;
-    const inventoryItem = await inventory_items.findOne({ where: { item_id } });
+    const inventoryItem = await item_master.findOne({ where: { item_id } });
 
     if (!inventoryItem) {
       throw new Error('Item not found in inventory');

@@ -1,11 +1,11 @@
-const { item_assign, inventory_items, locations, divisions, users, sequelize } = require('../models');
+const { item_assign, item_master, locations, divisions, users, sequelize } = require('../models');
 
 exports.getAllAssignments = async () => {
   try {
     const items = await item_assign.findAll({
       include: [
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['item_name', 'unit', 'quantity', 'status'], 
         },
@@ -69,7 +69,7 @@ exports.getAssignmentById = async (id) => {
       where: { assign_id: id },
       include: [
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['item_name', 'unit', 'quantity', 'status'], 
         },
@@ -106,7 +106,7 @@ exports.getAssignmentsByItemId = async (itemId) => {
       where: { item_id: itemId },
       include: [
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['item_name', 'unit', 'quantity', 'status'], 
         },
@@ -169,7 +169,7 @@ exports.createItemAssign = async (data) => {
 
   try {
     // Validate item quantity and status
-    const inventoryItem = await inventory_items.findOne({
+    const inventoryItem = await item_master.findOne({
       where: { item_id: data.item_id },
       transaction,
     });

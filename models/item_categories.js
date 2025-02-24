@@ -29,6 +29,8 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true 
     },
     category_name: DataTypes.STRING,
+    prefix: DataTypes.STRING,
+    description: DataTypes.TEXT,
     status: DataTypes.STRING,
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,

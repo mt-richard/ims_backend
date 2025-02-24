@@ -1,8 +1,8 @@
-const InvItemsService = require('../services/inventory_items.service');
+const ItemMasterService = require('../services/item_master.service');
 
 exports.getItemsInStock = async (req, res) => {
   try {
-    const items = await InvItemsService.getAllItemsInStock();
+    const items = await ItemMasterService.getAllItemsInStock();
     res.json(items); 
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -12,10 +12,10 @@ exports.getItemsInStock = async (req, res) => {
 
 exports.createStockItems = async (req, res) => { 
     try {
-        const { item_name, item_category, description, quantity, unit, supplier_id, location, status } = req.body
-        const ifExists = await InvItemsService.getByName(item_name)
+        const { item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, status } = req.body
+        const ifExists = await ItemMasterService.getByName(item_name)
         if (!ifExists) {
-            const response = await InvItemsService.createItems({ item_name, item_category, description, quantity, unit, supplier_id, location, status})
+            const response = await ItemMasterService.createItems({ item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, status})
             res.json(response);
         } else {
             res.status(200).json({message : "Item already exists"})
@@ -28,7 +28,7 @@ exports.createStockItems = async (req, res) => {
 exports.getItemById = async (req, res) => {
     try {
         const id = req.params.id;
-        const response =  await InvItemsService.getSupplierById(id);
+        const response =  await ItemMasterService.getSupplierById(id);
         res.json(response);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -38,7 +38,7 @@ exports.getItemById = async (req, res) => {
   exports.deleteSupplier = async (req, res) => {
     try {
       const id = req.params.id;
-      const supData = await InvItemsService.deleteSupplier(id);
+      const supData = await ItemMasterService.deleteSupplier(id);
       res.status(200).json(supData);
     } catch (error) {
       if (error.statusCode) {
@@ -56,7 +56,7 @@ exports.getItemById = async (req, res) => {
   exports.restoreSupplier = async (req, res) => {
     try {
       const id = req.params.id;
-      const supData = await InvItemsService.restoreSupplier(id);
+      const supData = await ItemMasterService.restoreSupplier(id);
       res.status(200).json(supData);
     } catch (error) {
       if (error.statusCode) {
@@ -75,7 +75,7 @@ exports.getItemById = async (req, res) => {
     try {
       const id = req.params.id;
       const { sup_name, contact, status } = req.body
-      const supData = await InvItemsService.editSupplier(id, sup_name, contact, status);
+      const supData = await ItemMasterService.editSupplier(id, sup_name, contact, status);
       res.status(200).json(supData);
     } catch (error) {
       if (error.statusCode) {

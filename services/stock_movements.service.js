@@ -1,4 +1,4 @@
-const { item_transactions, purchase_entry, stock_adjustments, inventory_items, locations, divisions, users } = require('../models');
+const { item_transactions, purchase_entry, stock_adjustments, item_master, locations, divisions, users } = require('../models');
 const { Op } = require('sequelize');
 
 exports.getStockMovements = async (filters) => {
@@ -36,7 +36,7 @@ exports.getStockMovements = async (filters) => {
     const itemTransactions = await item_transactions.findAll({
       where: whereClause,
       include: [
-        { model: inventory_items, as: 'itemId', attributes: ['item_name', 'unit'] },
+        { model: item_master, as: 'itemId', attributes: ['item_name', 'unit'] },
         { model: locations, as: 'Location', attributes: ['location_name'] },
         { model: divisions, as: 'divisionId', attributes: ['division_name'] },
         { model: users, as: 'createdBy', attributes: ['username'] },
@@ -47,7 +47,7 @@ exports.getStockMovements = async (filters) => {
     const purchaseEntries = await purchase_entry.findAll({
       where: whereClause,
       include: [
-        { model: inventory_items, as: 'itemId', attributes: ['item_name', 'unit'] },
+        { model: item_master, as: 'itemId', attributes: ['item_name', 'unit'] },
         { model: locations, as: 'receivedLocation', attributes: ['location_name'] },
         { model: users, as: 'createdBy', attributes: ['username'] },
       ],
@@ -56,7 +56,7 @@ exports.getStockMovements = async (filters) => {
     const stockAdjustments = await stock_adjustments.findAll({
       where: whereClause,
       include: [
-        { model: inventory_items, as: 'itemId', attributes: ['item_name', 'unit'] },
+        { model: item_master, as: 'itemId', attributes: ['item_name', 'unit'] },
         { model: locations, as: 'Location', attributes: ['location_name'] },
         { model: divisions, as: 'divisionId', attributes: ['division_name'] },
         { model: users, as: 'adjustedBy', attributes: ['username'] },

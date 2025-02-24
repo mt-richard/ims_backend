@@ -34,7 +34,9 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true 
     },
     description: DataTypes.STRING,
+    prefix: DataTypes.STRING,
     category_id: DataTypes.INTEGER,
+    sec_num: DataTypes.INTEGER,
     status: DataTypes.ENUM('active', 'inactive'),
     created_at: DataTypes.DATE,
     created_by: {

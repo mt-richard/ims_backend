@@ -1,4 +1,4 @@
-const { sequelize, stock_adjustments, inventory_items, users,locations,divisions, adjustment_reasons } = require('../models');
+const { sequelize, stock_adjustments, item_master, users,locations,divisions, adjustment_reasons } = require('../models');
 
 
 exports.getAllAdjustedRecords = async () => {
@@ -7,12 +7,12 @@ exports.getAllAdjustedRecords = async () => {
       attributes: ['adjust_id', 'item_id', 'quantity', 'location', 'division', 'employee', 'doc_type', 'qty_balance', 'ref_no', 'reason_id', 'comment', 'status'], // Ensure you select 'adjust_id' explicitly
       include: [
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['item_name'], 
         },
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['unit'], 
         },
@@ -124,7 +124,7 @@ exports.createStockAdjustment = async (data) => {
     const refNo = `ADJ${String(lastNumber).padStart(3, "0")}-${yearShort}`;
 
     // Find the inventory item
-    const inventoryItem = await inventory_items.findOne({
+    const inventoryItem = await item_master.findOne({
       where: { item_id: data.item_id },
       transaction,
     });
@@ -150,7 +150,7 @@ exports.createStockAdjustment = async (data) => {
     );
 
     // Update inventory quantity
-    await inventory_items.update(
+    await item_master.update(
       { quantity: newQuantity },
       { where: { item_id: data.item_id }, transaction }
     );

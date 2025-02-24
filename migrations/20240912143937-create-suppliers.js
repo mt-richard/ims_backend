@@ -18,6 +18,24 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true
       },
+      address: {
+        type: Sequelize.STRING,
+      },
+      currency: {
+        type: Sequelize.STRING,
+      },
+      sup_type: {
+        type: Sequelize.ENUM('local', 'external'),
+      },
+      division: {
+        type: Sequelize.STRING,
+        references: {
+          model: 'divisions', 
+          key: 'division_id',
+        },
+        onUpdate: 'CASCADE', 
+        onDelete: 'SET NULL'  
+      },
       status: {
         type: Sequelize.ENUM('active', 'inactive'),  // ENUM for status
         allowNull: false,

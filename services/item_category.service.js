@@ -69,7 +69,7 @@ exports.restoreCategory = async (id) => {
   }
 };
 
-exports.editCategory = async (id, name, status) => {
+exports.editCategory = async (id, name, description, prefix, status) => {
   try {
     let categoryData = await item_categories.findByPk(id);
     if (!categoryData) {
@@ -78,6 +78,8 @@ exports.editCategory = async (id, name, status) => {
       throw error;
     }
     categoryData.category_name = name;
+    categoryData.description = description;
+    categoryData.prefix = prefix;
     categoryData.status = status;
     await categoryData.save();
     return { message: "Category updated successfull", category: categoryData };

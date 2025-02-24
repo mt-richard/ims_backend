@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'updated_by',
         as: 'updatedBy',
       });
+
+      this.belongsTo(models.divisions, {
+        foreignKey: 'division',
+        as: 'sup_division',
+      });
     }
   }
   suppliers.init({
@@ -31,6 +36,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     sup_name: DataTypes.STRING,
     contact: DataTypes.STRING,
+    address: DataTypes.STRING,
+    sup_type: DataTypes.STRING,
+    currency: DataTypes.STRING,
+    division: DataTypes.STRING,
     status: DataTypes.STRING,
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,

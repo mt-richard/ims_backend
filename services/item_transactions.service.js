@@ -1,16 +1,16 @@
-const { item_transactions, inventory_items, locations, divisions, users, sequelize } = require('../models');
+const { item_transactions, item_master, locations, divisions, users, sequelize } = require('../models');
 
 exports.getAllTransactions = async () => {
   try {
     const items = await item_transactions.findAll({
       include: [
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['item_name'], 
         },
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['unit'], 
         },
@@ -142,7 +142,7 @@ exports.createTransaction = async (data) => {
     };
 
     // Retrieve inventory item to update quantity
-    const inventoryItem = await inventory_items.findOne({
+    const inventoryItem = await item_master.findOne({
       where: { item_id: data.item_id },
       transaction,
     });

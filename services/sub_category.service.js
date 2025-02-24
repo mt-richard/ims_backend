@@ -21,6 +21,8 @@ exports.getAllSubCategory = async () => {
         sub_cat_id: item.sub_cat_id,
         category_id: item.category_id,
         description: item.description,
+        prefix: item.prefix,
+        sec_num: item.sec_num,
         status: item.status,
         created_at: item.created_at,
         updated_at: item.updated_at,
@@ -92,7 +94,7 @@ exports.restoreSubCategory = async (id) => {
   }
 };
 
-exports.editSubCategory = async (id, category_id,description,status) => {
+exports.editSubCategory = async (id, category_id,description,prefix,status) => {
   try {
     let categoryData = await sub_categories.findByPk(id);
     if (!categoryData) {
@@ -102,6 +104,7 @@ exports.editSubCategory = async (id, category_id,description,status) => {
     }
     categoryData.category_id = category_id;
     categoryData.description = description;
+    categoryData.prefix = prefix;
     categoryData.status = status;
     await categoryData.save();
     return { message: "Sub Category updated successfull", category: categoryData };

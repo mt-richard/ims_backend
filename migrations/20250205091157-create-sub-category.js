@@ -13,6 +13,12 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
+      prefix: {
+        type: Sequelize.STRING
+      },
+      sec_num: {
+        type: Sequelize.INTEGER
+      },
       category_id: {
         type: Sequelize.INTEGER,
         references: {

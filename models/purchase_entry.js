@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         as: "createdBy",
       });
 
-      this.belongsTo(models.inventory_items, {
+      this.belongsTo(models.item_master, {
         foreignKey: "item_id",
         as: "itemId",
       });

@@ -1,4 +1,4 @@
-const { sequelize, purchase_entry, inventory_items, users, locations, suppliers } = require('../models');
+const { sequelize, purchase_entry, item_master, users, locations, suppliers } = require('../models');
 
 exports.getAllPurchases = async () => {
   try {
@@ -6,12 +6,12 @@ exports.getAllPurchases = async () => {
       attributes: ['purchase_id', 'ref_no', 'item_id', 'supplier_id', 'quantity', 'supp_invoice_no','invoice_date','delivery_date', 'purchase_type', 'fx_rate', 'fx_symbol', 'fx_amount', 'unit_price', 'total_price', 'qty_balance', 'doc_type', 'received_location', 'warrant_info', 'status', 'created_at', 'created_by'], 
       include: [
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['item_name'], 
         },
         {
-          model: inventory_items,
+          model: item_master,
           as: 'itemId', 
           attributes: ['unit'], 
         },
@@ -112,7 +112,7 @@ exports.createPurchaseEntry = async (data) => {
     let newQuantity = 0; 
 
     if (data.doc_type === "GRN") {
-      const inventoryItem = await inventory_items.findOne({
+      const inventoryItem = await item_master.findOne({
         where: { item_id: data.item_id },
         transaction,
       });
@@ -125,7 +125,7 @@ exports.createPurchaseEntry = async (data) => {
       console.log("added qty :",purchaseQty)
       console.log("new qty :",newQuantity)
 
-      await inventory_items.update(
+      await item_master.update(
         { quantity: newQuantity},
         { where: { item_id: data.item_id }, transaction}
       );

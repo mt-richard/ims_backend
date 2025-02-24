@@ -12,10 +12,10 @@ exports.getCategories = async (req, res) => {
 
 exports.createCategory = async (req, res) => { 
     try {
-        const { category_name, status } = req.body
+        const { category_name, description, prefix, status } = req.body
         const ifExists = await ItemCategoryService.getByName(category_name)
         if (!ifExists) {
-            const response = await ItemCategoryService.createCategory({ category_name, status})
+            const response = await ItemCategoryService.createCategory({ category_name, description, prefix, status})
             res.json(response);
         } else {
             res.status(200).json({message : "Item Category already exists"})
@@ -74,8 +74,8 @@ exports.getCategoryByID = async (req, res) => {
   exports.editCategory = async (req, res) => {
     try {
       const id = req.params.id;
-      const { category_name, status } = req.body
-      const catData = await ItemCategoryService.editCategory(id, category_name, status);
+      const { category_name, description, prefix, status } = req.body
+      const catData = await ItemCategoryService.editCategory(id, category_name, description, prefix, status);
       res.status(200).json(catData);
     } catch (error) {
       if (error.statusCode) {

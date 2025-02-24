@@ -13,6 +13,13 @@ module.exports = {
       category_name: {
         type: Sequelize.STRING
       },
+      perfix: {
+        type: Sequelize.STRING
+      },
+      
+      desription: {
+        type: Sequelize.TEXT
+      },
       status: {
         type: Sequelize.ENUM('active', 'inactive'),  
         allowNull: false,
