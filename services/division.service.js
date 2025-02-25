@@ -93,7 +93,7 @@ exports.restoreDivision = async (id) => {
   }
 };
 
-exports.editDivision = async (id, location_id, division_code,division_name,status) => {
+exports.editDivision = async (id, division_name,division_code,location_id,status) => {
   try {
     let categoryData = await divisions.findByPk(id);
     if (!categoryData) {

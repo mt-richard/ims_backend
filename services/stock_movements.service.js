@@ -1,4 +1,4 @@
-const { item_transactions, purchase_entry, stock_adjustments, item_master, locations, divisions, users } = require('../models');
+const { item_transfer, purchase_entry, stock_adjustments, item_master, locations, divisions, users } = require('../models');
 const { Op } = require('sequelize');
 
 exports.getStockMovements = async (filters) => {
@@ -33,7 +33,7 @@ exports.getStockMovements = async (filters) => {
       whereClause.status = status;
     }
 
-    const itemTransactions = await item_transactions.findAll({
+    const itemTransactions = await item_transfer.findAll({
       where: whereClause,
       include: [
         { model: item_master, as: 'itemId', attributes: ['item_name', 'unit'] },

@@ -1,4 +1,4 @@
-const ItemTransactionService = require("../services/item_transactions.service");
+const ItemTransactionService = require("../services/item_transfer.service");
 
 exports.getTransaction = async (req, res) => {
   try {
@@ -8,8 +8,6 @@ exports.getTransaction = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
 
 exports.createTransactions = async (req, res) => {
   try {

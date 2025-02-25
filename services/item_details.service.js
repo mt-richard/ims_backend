@@ -50,8 +50,18 @@ exports.getItemDetails = async (assetId) => {
     };
 
     // Parse the location JSON field and include location details
+    let locationData;
+    try {
+      locationData = JSON.parse(item.location);
+      if (!Array.isArray(locationData)) {
+        throw new Error("Invalid location data format");
+      }
+    } catch (error) {
+      throw new Error("Invalid location data format");
+    }
+
     const locationDetails = await Promise.all(
-      JSON.parse(item.location).map(async (loc) => {
+      locationData.map(async (loc) => {
         const locationDetail = await locations.findOne({
           where: { location_id: loc.location_id },
           attributes: ['location_name'],

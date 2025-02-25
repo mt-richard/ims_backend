@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'location',
         as: 'location_use',
       });
+      
+      this.belongsTo(models.divisions, {
+        foreignKey: 'division',
+        as: 'division_belong',
+      });
 
       this.belongsTo(models.users, {
         foreignKey: 'updated_by',
@@ -58,6 +63,16 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     asset_id: DataTypes.STRING,
+    division: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'divisions',
+        key: 'division_id',
+      },
+    },
+    cost: DataTypes.DECIMAL,
+    bin_location: DataTypes.INTEGER,
+    taxable: DataTypes.ENUM('1', '0'),
     location: {
       type: DataTypes.JSON,
       defaultValue: [],

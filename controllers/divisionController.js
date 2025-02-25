@@ -74,8 +74,8 @@ exports.getDivisionByID = async (req, res) => {
   exports.editDivision = async (req, res) => {
     try {
       const id = req.params.id;
-      const { location_id, division_name, division_code, status } = req.body
-      const catData = await DivisionService.editDivision(id, location_id, division_name, division_code, status);
+      const {division_name, division_code, location_id, status } = req.body
+      const catData = await DivisionService.editDivision(id, division_name, division_code, location_id, status);
       res.status(200).json(catData);
     } catch (error) {
       if (error.statusCode) {

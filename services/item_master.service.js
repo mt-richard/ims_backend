@@ -1,4 +1,4 @@
-const { item_master, item_categories, sub_categories, locations, suppliers, sequelize } = require('../models');
+const { item_master, item_categories, sub_categories, locations,divisions, suppliers, sequelize } = require('../models');
 
 exports.getAllItemsInStock = async () => {
   try {
@@ -19,6 +19,11 @@ exports.getAllItemsInStock = async () => {
           as: 'location_use',
           attributes: ['location_name'],
         },
+        {
+          model: divisions,
+          as: 'division_belong',
+          attributes: ['division_name'],
+        },
       ],
     });
 
@@ -29,6 +34,10 @@ exports.getAllItemsInStock = async () => {
         item_category: item.item_category,
         item_name: item.item_name,
         description: item.description,
+        cost: item.cost,
+        bin_location: item.bin_location,
+        taxable: item.taxable,
+        division: item.division,
         quantity: item.quantity,
         unit: item.unit,
         supplier_id: item.supplier_id,

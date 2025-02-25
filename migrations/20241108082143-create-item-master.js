@@ -29,7 +29,8 @@ module.exports = {
         allowNull: false,
       },
       quantity: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       },
       unit: {
         type: Sequelize.STRING
@@ -50,6 +51,26 @@ module.exports = {
       asset_id: {
         type: Sequelize.STRING,
         unique: true
+      },
+      division: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'divisions',
+          key: 'division_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
+      cost: {
+        type: Sequelize.DECIMAL,
+        defaultValue: 0
+      },
+      bin_location: {
+        type: Sequelize.INTEGER
+      },
+      taxable: {
+        type: Sequelize.ENUM('1', '0'),
+        allowNull: true,
       },
       status: {
         type: Sequelize.ENUM('active', 'inactive'),

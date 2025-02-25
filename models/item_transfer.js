@@ -2,12 +2,8 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class item_assign extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+  class item_transfer extends Model {
+    
     static associate(models) {
       // define association here
       this.belongsTo(models.item_master, {
@@ -37,13 +33,17 @@ module.exports = (sequelize, DataTypes) => {
 
     }
   }
-  item_assign.init(
+  item_transfer.init(
     {
-      assign_id: {
+      transfer_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
+      },
+      ref_no: {
+        allowNull: false,
+        type: DataTypes.STRING,
       },
       item_id: {
         type: DataTypes.INTEGER,
@@ -52,12 +52,8 @@ module.exports = (sequelize, DataTypes) => {
           key: "item_id",
         },
       },
-      tag_id: {
-        type: DataTypes.STRING,
-      },
-      serial_number: {
-        type: DataTypes.STRING,
-      },
+      quantity: DataTypes.INTEGER,
+      qty_balance: DataTypes.INTEGER,
       location: {
         type: DataTypes.INTEGER,
         references: {
@@ -80,6 +76,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       remark: DataTypes.TEXT,
+      doc_type: DataTypes.ENUM("GRN", "TRN", "ADJ", "REC"),
       status: DataTypes.ENUM("active", "inactive"),
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
@@ -101,14 +98,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "item_assign",
+      modelName: "item_transfer",
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
       underscored: true,
       freezeTableName: true,
-      primaryKey: "assign_id",
+      primaryKey: "transfer_id",
     }
   );
-  return item_assign;
+  return item_transfer;
 };

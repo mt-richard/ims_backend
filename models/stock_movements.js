@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
       item_id: {
         type: DataTypes.INTEGER,
         references: {
-          model: "inevntory_items",
+          model: "item_master",
           key: "item_id",
         },
       },

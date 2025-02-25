@@ -20,8 +20,6 @@ module.exports = (sequelize, DataTypes) => {
         as: 'createdBy',
       });
 
-    
-
       this.belongsTo(models.locations, {
         foreignKey: 'location',
         as: 'Location',
@@ -41,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   item_transactions.init(
     {
-      transaction_id: {
+      transfer_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -54,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       item_id: {
         type: DataTypes.INTEGER,
         references: {
-          model: "inevntory_items",
+          model: "item_master",
           key: "item_id",
         },
       },

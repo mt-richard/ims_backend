@@ -12,10 +12,10 @@ exports.getItemsInStock = async (req, res) => {
 
 exports.createStockItems = async (req, res) => { 
     try {
-        const { item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, status } = req.body
+        const { item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, division, status } = req.body
         const ifExists = await ItemMasterService.getByName(item_name)
         if (!ifExists) {
-            const response = await ItemMasterService.createItems({ item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, status})
+            const response = await ItemMasterService.createItems({ item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, division, status})
             res.json(response);
         } else {
             res.status(200).json({message : "Item already exists"})

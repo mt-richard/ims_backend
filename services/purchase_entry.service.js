@@ -92,7 +92,7 @@ exports.createPurchaseEntry = async (data) => {
 
     const totalPrice = unitPrice * purchaseQty;
     const currentDate = new Date();
-    const yearShort = String(currentDate.getFullYear()).slice(-2); 
+    const yearShort = String(currentDate.getFullYear()).slice(-2);
 
     const lastEntry = await purchase_entry.findOne({
       order: [["purchase_id", "DESC"]],
@@ -100,7 +100,7 @@ exports.createPurchaseEntry = async (data) => {
       transaction,
     });
 
-    let lastNumber = 1; 
+    let lastNumber = 1;
     if (lastEntry && lastEntry.ref_no) {
       const match = lastEntry.ref_no.match(/GRN(\d+)-(\d{2})/);
       if (match) {
@@ -109,7 +109,7 @@ exports.createPurchaseEntry = async (data) => {
     }
 
     const refNo = `GRN${String(lastNumber).padStart(3, "0")}-${yearShort}`;
-    let newQuantity = 0; 
+    let newQuantity = 0;
 
     if (data.doc_type === "GRN") {
       const inventoryItem = await item_master.findOne({
@@ -122,12 +122,30 @@ exports.createPurchaseEntry = async (data) => {
       }
 
       newQuantity = inventoryItem.quantity + purchaseQty;
-      console.log("added qty :",purchaseQty)
-      console.log("new qty :",newQuantity)
+
+      // Update the location JSON field
+      let locationData;
+      try {
+        locationData = JSON.parse(inventoryItem.location);
+        if (!Array.isArray(locationData)) {
+          throw new Error("Invalid location data format");
+        }
+      } catch (error) {
+        console.error("Error parsing location data:", error.message);
+        throw new Error("Invalid location data format");
+      }
+
+      const locationIndex = locationData.findIndex(loc => loc.location_id === parseInt(data.received_location, 10));
+
+      if (locationIndex !== -1) {
+        locationData[locationIndex].qty += purchaseQty;
+      } else {
+        locationData.push({ location_id: parseInt(data.received_location, 10), qty: purchaseQty });
+      }
 
       await item_master.update(
-        { quantity: newQuantity},
-        { where: { item_id: data.item_id }, transaction}
+        { quantity: newQuantity, location: locationData },
+        { where: { item_id: data.item_id }, transaction }
       );
     }
 
@@ -164,4 +182,3 @@ exports.createPurchaseEntry = async (data) => {
     throw new Error(`Error creating purchase entry: ${error.message}`);
   }
 };
-
