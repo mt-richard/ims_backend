@@ -228,6 +228,7 @@ exports.createTransaction = async (data) => {
       where: { item_id: data.item_id },
       transaction,
     });
+    
 
     if (!inventoryItem) {
       throw new Error("Inventory item not found.");
