@@ -23,12 +23,13 @@ exports.getAllEmployees = async () => {
     return items.map(item => {
       return {
         emp_id: item.emp_id,
+        emp_code: item.emp_code,
         first_name: item.first_name,
         last_name: item.last_name,
         email: item.email,
         phone: item.phone,
-        location: item.location,
-        division: item.division,
+        location_id: item.location,
+        division_id: item.division,
         status: item.status,
         created_at: item.created_at,
         updated_at: item.updated_at,

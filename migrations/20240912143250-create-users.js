@@ -27,6 +27,15 @@ module.exports = {
         type: Sequelize.ENUM('admin', 'manager', 'it_person'), 
         allowNull: false
       },
+      division: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'divisions',
+          key: 'division_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
       status: {
         type: Sequelize.ENUM('active', 'inactive'), 
         allowNull: false,

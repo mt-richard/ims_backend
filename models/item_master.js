@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     item_name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    item_type: DataTypes.ENUM('asset', 'expense'),
+    item_type: DataTypes.ENUM('asset', 'expense', 'accessory', 'license'),
     quantity: DataTypes.INTEGER,
     unit: DataTypes.STRING,
     supplier_id: {

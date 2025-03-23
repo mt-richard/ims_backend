@@ -9,23 +9,6 @@ exports.getPurchaseEntries = async (req, res) => {
   }
 };
 
-// exports.createStockAdjustment = async (req, res) => { 
-//   try {
-//     const { item_id, quantity, adjust_type, reason_id, adjusted_at, adjusted_by, status } = req.body;
-//     const response = await PurchaseEntryService.createStockAdjustment({
-//       item_id,
-//       quantity,
-//       adjust_type,
-//       reason_id,
-//       adjusted_at,
-//       adjusted_by,
-//       status,
-//     });
-//     res.json(response);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 exports.createPurchaseEntry = async (req, res) => {
   try {

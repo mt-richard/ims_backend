@@ -84,87 +84,6 @@ exports.getTransactionById = async (id) => {
   }
 };
 
-// exports.createTransaction = async (data) => {
-//   const transaction = await sequelize.transaction();
-
-//   try {
-//     const quantity = parseInt(data.quantity, 10);
-//     if (isNaN(quantity) || quantity <= 0) {
-//       throw new Error("Invalid quantity. Must be a positive integer.");
-//     }
-
-//     // Check if the provided division values exist
-//     const fromDivision = await divisions.findOne({
-//       where: { division_id: data.from_division },
-//     });
-//     const toDivision = await divisions.findOne({
-//       where: { division_id: data.to_division },
-//     });
-
-//     if (!fromDivision || !toDivision) {
-//       throw new Error("One or more provided divisions do not exist.");
-//     }
-
-//     const currentDate = new Date();
-//     const yearShort = String(currentDate.getFullYear()).slice(-2);
-
-//     const lastEntry = await item_transfer.findOne({
-//       order: [["transfer_id", "DESC"]],
-//       attributes: ["ref_no"],
-//       transaction,
-//     });
-
-//     let lastNumber = 1;
-//     if (lastEntry && lastEntry.ref_no) {
-//       const match = lastEntry.ref_no.match(/TR(\d+)-(\d{2})/);
-//       if (match) {
-//         lastNumber = parseInt(match[1], 10) + 1;
-//       }
-//     }
-
-//     const refNo = `TR${String(lastNumber).padStart(3, "0")}-${yearShort}`;
-
-//     const createEntry = async (item, transactionType, location, division, employee) => {
-//       await item_transfer.create(
-//         {
-//           item_id: item.item_id,
-//           location: location,
-//           division: division,
-//           employee: employee,
-//           quantity: transactionType === "remove" ? -quantity : quantity,
-//           remark: item.remark,
-//           ref_no: refNo,
-//           created_by: item.created_by,
-//           qty_balance: inventoryItem.quantity,
-//         },
-//         { transaction }
-//       );
-//     };
-
-//     // Retrieve inventory item to update quantity
-//     const inventoryItem = await item_master.findOne({
-//       where: { item_id: data.item_id },
-//       transaction,
-//     });
-
-//     if (!inventoryItem) {
-//       throw new Error("Inventory item not found.");
-//     }
-
-//     await createEntry(data, "remove", data.from_location, data.from_division, data.from_employee);
-//     await createEntry(data, "add", data.to_location, data.to_division, data.to_employee);
-//     await transaction.commit();
-
-//     return { message: "Transactions recorded successfully" };
-//   } catch (error) {
-//     await transaction.rollback();
-//     throw new Error(`Error creating transactions: ${error.message}`);
-//   }
-// };
-
-
-// const { item_transfer, item_master, locations, divisions, users, sequelize } = require('../models');
-
 exports.createTransaction = async (data) => {
   const transaction = await sequelize.transaction();
 
@@ -228,7 +147,6 @@ exports.createTransaction = async (data) => {
       where: { item_id: data.item_id },
       transaction,
     });
-    
 
     if (!inventoryItem) {
       throw new Error("Inventory item not found.");
@@ -263,6 +181,14 @@ exports.createTransaction = async (data) => {
     } else {
       locationData.push({ location_id: parseInt(data.to_location, 10), qty: quantity });
     }
+
+    // Refresh location JSON field and add new location with 0 quantity if not available
+    const allLocations = await locations.findAll();
+    allLocations.forEach(loc => {
+      if (!locationData.find(location => location.location_id === loc.location_id)) {
+        locationData.push({ location_id: loc.location_id, qty: 0 });
+      }
+    });
 
     await item_master.update(
       { location: locationData },

@@ -9,3 +9,13 @@ exports.getStockMovements = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getStockMovementsByItem = async (req, res) => {
+  try {
+    const filters = req.query;
+    const data = await stock_movements.getStockMovementByItem(filters);
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

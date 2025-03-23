@@ -144,7 +144,13 @@ exports.createPurchaseEntry = async (data) => {
       }
 
       await item_master.update(
-        { quantity: newQuantity, location: locationData },
+        { 
+          quantity: newQuantity, 
+          location: locationData,
+          cost: totalPrice, 
+          bin_location: data.received_location, 
+          taxable: data.taxable, 
+        },
         { where: { item_id: data.item_id }, transaction }
       );
     }
@@ -159,6 +165,7 @@ exports.createPurchaseEntry = async (data) => {
         invoice_date: data.invoice_date,
         delivery_date: data.delivery_date,
         purchase_type: data.purchase_type,
+        taxable: data.taxable,
         fx_rate: data.fx_rate,
         fx_symbol: data.fx_symbol,
         fx_amount: data.fx_amount,
