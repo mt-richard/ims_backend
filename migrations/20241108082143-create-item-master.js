@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      item_category: {
+      sub_category_id: {
         type: Sequelize.INTEGER,
         references: {
           model: 'sub_categories', 
@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.TEXT
       },
       item_type: {
-        type: Sequelize.ENUM('asset', 'expense'),
+        type: Sequelize.ENUM('asset', 'expense', 'accessory', 'license'),
         allowNull: false,
       },
       quantity: {
@@ -72,10 +72,24 @@ module.exports = {
         type: Sequelize.ENUM('1', '0'),
         allowNull: true,
       },
+      item_status: {
+        type: Sequelize.ENUM('in-use', 'in-stock', 'scrapped', 'lost'),
+        allowNull: false,
+        defaultValue: 'in-stock'
+      },
       status: {
         type: Sequelize.ENUM('active', 'inactive'),
         allowNull: false,
         defaultValue: 'active'
+      },
+
+      license_start_time: {
+        allowNull: true,
+        type: Sequelize.DATE
+      },
+      license_expire_time: {
+        allowNull: true,
+        type: Sequelize.DATE
       },
       created_at: {
         allowNull: false,

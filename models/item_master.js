@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   class item_master extends Model {
     static associate(models) {
       this.belongsTo(models.sub_categories, {
-        foreignKey: 'item_category',
+        foreignKey: 'sub_category_id',
         as: 'category',
       });
 
@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    item_category: {
+    sub_category_id: {
       type: DataTypes.INTEGER,
       references: {
         model: 'sub_categories',
@@ -77,7 +77,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.JSON,
       defaultValue: [],
     },
+    item_status: DataTypes.ENUM('in-use', 'in-stock', 'scrapped', 'lost'),
     status: DataTypes.ENUM('active', 'inactive'),
+    license_start_time: DataTypes.DATE,
+    license_expire_time: DataTypes.DATE,
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
     created_by: {

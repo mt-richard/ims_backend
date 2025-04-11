@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "5ecr3tAbG";
 exports.getAllUsers = async () => {
   try {
     return await users.findAll();
-  } catch (error) {
+  } catch (error) {d
     throw new Error(`Error fetching users: ${error.message}`);
   }
 };
@@ -151,7 +151,7 @@ exports.login = async (email, password) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.user_id, username: user.username, email: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: "1h" }
     );

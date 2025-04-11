@@ -2,7 +2,8 @@ const ItemMasterService = require('../services/item_master.service');
 
 exports.getItemsInStock = async (req, res) => {
   try {
-    const items = await ItemMasterService.getAllItemsInStock();
+    console.log("User ID:", req.user.id); 
+    const items = await ItemMasterService.getItemsInStockByDiv(req.user.id); 
     res.json(items); 
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -12,13 +13,13 @@ exports.getItemsInStock = async (req, res) => {
 
 exports.createStockItems = async (req, res) => { 
     try {
-        const { item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, division, status } = req.body
+        const { item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, division, item_type, item_status, license_start_time, license_expire_time ,status } = req.body
         const ifExists = await ItemMasterService.getByName(item_name)
         if (!ifExists) {
-            const response = await ItemMasterService.createItems({ item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, division, status})
+            const response = await ItemMasterService.createItems({ item_name, item_category, description, quantity, unit, supplier_id, sub_category_id, location, division, item_type, item_status, license_start_time, license_expire_time, status})
             res.json(response);
         } else {
-            res.status(200).json({message : "Item already exists"})
+          res.status(409).json({ message: "Item already exists" });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });

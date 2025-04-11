@@ -1,4 +1,4 @@
-const { item_master, item_categories, sub_categories, locations,divisions, suppliers, sequelize } = require('../models');
+const { item_master, item_categories, sub_categories, users, locations,divisions, suppliers, sequelize } = require('../models');
 
 exports.getAllItemsInStock = async () => {
   try {
@@ -46,12 +46,15 @@ exports.getAllItemsInStock = async () => {
         bin_location: item.bin_location,
         taxable: item.taxable,
         asset_id: item.asset_id,
+        item_status: item.item_status,
         status: item.status,
+        license_start_time: item.license_start_time,
+        license_expire_time: item.license_expire_time,
         created_at: item.created_at,
         updated_at: item.updated_at,
         created_by: item.created_by,
         updated_by: item.updated_by,
-        category_name: item.category ? item.category.category_name : null,
+        category_name: item.category ? item.category.description : null,
         sup_name: item.supplier ? item.supplier.sup_name : null,
         location_name: item.location_use ? item.location_use.location_name : null,
         item_type: item.item_type,
@@ -61,6 +64,81 @@ exports.getAllItemsInStock = async () => {
     throw new Error(`Error fetching inventory items: ${error.message}`);
   }
 };
+
+
+exports.getItemsInStockByDiv = async (userId) => {
+  try {
+    const user = await users.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!user) throw new Error('User not found');
+
+    const queryOptions = {
+      include: [
+        {
+          model: sub_categories,
+          as: 'category',
+          attributes: ['description'],
+        },
+        {
+          model: suppliers,
+          as: 'supplier',
+          attributes: ['sup_name'],
+        },
+        {
+          model: locations,
+          as: 'location_use',
+          attributes: ['location_name'],
+        },
+        {
+          model: divisions,
+          as: 'division_belong',
+          attributes: ['division_name'],
+        },
+      ],
+    };
+
+    if (user.role !== 'admin') {
+      queryOptions.where = {
+        division: user.division,
+      };
+    }
+
+    const items = await item_master.findAll(queryOptions);
+
+    return items.map(item => ({
+      item_id: item.item_id,
+      item_category: item.item_category,
+      item_name: item.item_name,
+      description: item.description,
+      cost: item.cost,
+      bin_location: item.bin_location,
+      taxable: item.taxable,
+      division: item.division,
+      quantity: item.quantity,
+      unit: item.unit,
+      supplier_id: item.supplier_id,
+      location: item.location,
+      asset_id: item.asset_id,
+      item_status: item.item_status,
+      status: item.status,
+      license_start_time: item.license_start_time,
+      license_expire_time: item.license_expire_time,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+      created_by: item.created_by,
+      updated_by: item.updated_by,
+      category_name: item.category?.description || null,
+      sup_name: item.supplier?.sup_name || null,
+      location_name: item.location_use?.location_name || null,
+      item_type: item.item_type,
+    }));
+  } catch (error) {
+    throw new Error(`Error fetching inventory items: ${error.message}`);
+  }
+};
+
 
 exports.getItemById = async (id) => {
   try {

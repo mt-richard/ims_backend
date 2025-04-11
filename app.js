@@ -6,7 +6,11 @@ const port = 4500
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // main routes
 app.use('/auth', require('./routes/auth'))
@@ -26,6 +30,8 @@ app.use('/stock_movements', require('./routes/stock_movements'))
 app.use('/item_assign', require('./routes/item_assign'))
 app.use('/item_details', require('./routes/item_details'))
 app.use('/employees', require('./routes/employees'))
+app.use('/dashboard', require('./routes/dashboard'))
+// app.use('/user_activity', require('./routes/user_activity'))
 
 app.get('/', (req, res) =>{
     res.send('Welcome to ABG I.T Inventory MS API.');
