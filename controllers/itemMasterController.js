@@ -2,7 +2,6 @@ const ItemMasterService = require('../services/item_master.service');
 
 exports.getItemsInStock = async (req, res) => {
   try {
-    console.log("User ID:", req.user.id); 
     const items = await ItemMasterService.getItemsInStockByDiv(req.user.id); 
     res.json(items); 
   } catch (error) {

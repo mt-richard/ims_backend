@@ -2,7 +2,7 @@ const ItemTransactionService = require("../services/item_transfer.service");
 
 exports.getTransaction = async (req, res) => {
   try {
-    const transactions = await ItemTransactionService.getAllTransactions();
+    const transactions = await ItemTransactionService.getAllTransactionsByDiv(req.user.id);
     res.json(transactions);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -11,7 +11,7 @@ exports.getTransaction = async (req, res) => {
 
 exports.createTransactions = async (req, res) => {
   try {
-    const data = req.body; // Get request data
+    const data = req.body;
     const result = await ItemTransactionService.createTransaction(data);
 
     return res.status(201).json({

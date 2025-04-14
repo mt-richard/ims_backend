@@ -68,6 +68,89 @@ exports.getAllTransactions = async () => {
   }
 };
 
+exports.getAllTransactionsByDiv = async (userId) => {
+  try {
+    const user = await users.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!user) throw new Error('User not found');
+
+    let refNosToInclude = [];
+
+    if (user.role !== 'admin') {
+      // Step 1: Get ref_no values for the user's division
+      const divisionTransfers = await item_transfer.findAll({
+        where: { division: user.division },
+        attributes: ['ref_no'],
+        raw: true,
+      });
+
+      refNosToInclude = divisionTransfers.map(t => t.ref_no);
+    }
+
+    const queryOptions = {
+      where: {},
+      include: [
+        {
+          model: users,
+          as: 'updatedBy',
+          attributes: ['username'],
+        },
+        {
+          model: item_master,
+          as: 'itemId',
+          attributes: ['item_name', 'unit'],
+        },
+        {
+          model: locations,
+          as: 'Location',
+          attributes: ['location_name'],
+        },
+        {
+          model: divisions,
+          as: 'divisionId',
+          attributes: ['division_name'],
+        },
+      ],
+    };
+
+    if (user.role !== 'admin' && refNosToInclude.length > 0) {
+      // Step 2: Add WHERE clause for all matching ref_no values
+      queryOptions.where = {
+        ref_no: refNosToInclude,
+      };
+    }
+
+    const items = await item_transfer.findAll(queryOptions);
+
+    // Step 3: Format the result
+    return items.map(item => ({
+      transfer_id: item.transfer_id,
+      item_id: item.item_id,
+      ref_no: item.ref_no,
+      quantity: item.quantity,
+      qty_balance: item.qty_balance,
+      location: item.location,
+      division: item.division,
+      employee: item.employee,
+      remark: item.remark,
+      doc_type: item.doc_type,
+      status: item.status,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+      created_by: item.created_by,
+      updated_by: item.updated_by,
+      item_name: item.itemId ? item.itemId.item_name : null,
+      item_unit: item.itemId ? item.itemId.unit : null,
+      location_name: item.Location ? item.Location.location_name : null,
+      division_name: item.divisionId ? item.divisionId.division_name : null,
+    }));
+  } catch (error) {
+    throw new Error(`Error fetching inventory items: ${error.message}`);
+  }
+};
+
 exports.getTransactionByRef = async (ref) => {
   try {
     return await item_transfer.findOne({where: {ref_no: ref }});
