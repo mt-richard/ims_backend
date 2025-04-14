@@ -4,7 +4,7 @@ const { sequelize, stock_adjustments, item_master, users,locations,divisions, ad
 exports.getAllAdjustedRecords = async () => {
   try {
     const items = await stock_adjustments.findAll({
-      attributes: ['adjust_id', 'item_id', 'quantity', 'location', 'division', 'employee', 'doc_type', 'qty_balance', 'ref_no', 'reason_id', 'comment', 'status'], // Ensure you select 'adjust_id' explicitly
+      attributes: ['adjust_id', 'item_id', 'quantity', 'location', 'division', 'employee', 'doc_type', 'qty_balance', 'ref_no', 'adjusted_at', 'reason_id', 'comment', 'status'], // Ensure you select 'adjust_id' explicitly
       include: [
         {
           model: item_master,
@@ -63,6 +63,7 @@ exports.getAllAdjustedRecords = async () => {
         employee: item.employee,
         doc_type: item.doc_type,
         reason_id: item.reason_id,
+        adjusted_at: item.adjusted_at,
         comment: item.comment,
         status: item.status,
         itemName: item.itemId ? item.itemId.item_name : null, 
