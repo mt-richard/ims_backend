@@ -1,4 +1,4 @@
-const { users, otps } = require("../models");
+const { users, otps, divisions } = require("../models");
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -7,13 +7,47 @@ const crypto = require("crypto");
 
 const JWT_SECRET = process.env.JWT_SECRET || "5ecr3tAbG";
 
+
 exports.getAllUsers = async () => {
   try {
-    return await users.findAll();
-  } catch (error) {d
-    throw new Error(`Error fetching users: ${error.message}`);
-  }
+    const items = await users.findAll({
+      include: [
+        {
+          model: divisions,
+          as: 'division_belong', 
+          attributes: ['division_name'], 
+        },
+      ],
+    });
+
+    // Transform the items to the desired format
+    return items.map(item => {
+      return {
+        user_id: item.user_id,
+        username: item.username,
+        email: item.email,
+        role: item.role,
+        division: item.division,
+        status: item.status,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        created_by: item.created_by,
+        updated_by: item.updated_by,
+        division_name: item.division_belong ? item.division_belong.division_name : null, 
+      };
+    });
+  } catch (error) {
+    throw new Error(`Error fetching suppliers: ${error.message}`);
+  } 
 };
+
+// exports.getAllUsers = async () => {
+//   try {
+//     return await users.findAll();
+//   } catch (error) {d
+//     throw new Error(`Error fetching users: ${error.message}`);
+//   }
+// };
 
 exports.getUserByEmailOrUsername = async (email, username) => {
   try {
