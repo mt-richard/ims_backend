@@ -10,11 +10,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      division_name: {
-        type: Sequelize.STRING
-      },
-      division_code: {
-        type: Sequelize.INTEGER
+      division_detail: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'division_detail', 
+          key: 'division_id',
+        },
+        onUpdate: 'CASCADE', 
+        onDelete: 'SET NULL'  
       },
       location_id: {
         type: Sequelize.INTEGER,
@@ -35,23 +38,28 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW
       },
-      created_by: {
-        type: Sequelize.INTEGER
-      },
       updated_at: {
         type: Sequelize.DATE
       },
+      
+      created_by: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'user_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
       updated_by: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'user_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
     });
   },
   async down(queryInterface, Sequelize) {

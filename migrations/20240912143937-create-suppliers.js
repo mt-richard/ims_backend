@@ -28,9 +28,9 @@ module.exports = {
         type: Sequelize.ENUM('local', 'external'),
       },
       division: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         references: {
-          model: 'divisions', 
+          model: 'division_detail', 
           key: 'division_id',
         },
         onUpdate: 'CASCADE', 
@@ -51,10 +51,21 @@ module.exports = {
       },
       created_by: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        references: {
+          model: 'users',
+          key: 'user_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       updated_by: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'user_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
 
     });

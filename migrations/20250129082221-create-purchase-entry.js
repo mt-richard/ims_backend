@@ -65,6 +65,15 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
+      division: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'division_detail',
+          key: 'division_id', 
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
       fx_rate: {
         type: Sequelize.DECIMAL
       },

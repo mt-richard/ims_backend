@@ -12,7 +12,7 @@ exports.getUsers = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    const { username, email, password, role, status } = req.body;
+    const { username, email, password, role, division, status } = req.body;
 
     const ifExists = await UserService.getUserByEmailOrUsername(
       email,
@@ -27,6 +27,7 @@ exports.createUser = async (req, res) => {
         email,
         password: hashedPassword,
         role,
+        division,
         status,
       });
       res.json(response);
@@ -86,12 +87,13 @@ exports.restoreUser = async (req, res) => {
 exports.editUser = async (req, res) => {
   try {
     const id = req.params.id;
-    const { username, email, role, status } = req.body;
+    const { username, email, role,division, status } = req.body;
     const UserData = await UserService.editUser(
       id,
       username,
       email,
       role,
+      division,
       status
     );
     res.status(200).json(UserData);

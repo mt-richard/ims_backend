@@ -1,72 +1,90 @@
-const { sequelize, purchase_entry, item_master, users, locations, suppliers } = require('../models');
-
-exports.getAllPurchases = async () => {
+const { sequelize, purchase_entry, item_master, users, locations, division_detail, suppliers } = require('../models');
+exports.getAllPurchases = async (userId) => {
   try {
-    const items = await purchase_entry.findAll({
-      attributes: ['purchase_id', 'ref_no', 'item_id', 'supplier_id', 'quantity', 'supp_invoice_no','invoice_date','delivery_date', 'purchase_type', 'fx_rate', 'fx_symbol', 'fx_amount', 'unit_price', 'total_price', 'qty_balance', 'doc_type', 'received_location', 'warrant_info', 'status', 'created_at', 'created_by'], 
-      include: [
-        {
-          model: item_master,
-          as: 'itemId', 
-          attributes: ['item_name'], 
-        },
-        {
-          model: item_master,
-          as: 'itemId', 
-          attributes: ['unit'], 
-        },
-        {
-          model: users,
-          as: 'createdBy', 
-          attributes: ['username'], 
-        },
-        {
-          model: locations,
-          as: 'receivedLocation', 
-          attributes: ['location_name'], 
-        },
-        {
-          model: suppliers,
-          as: 'supplieredBy', 
-          attributes: ['sup_name'], 
-        },
-      ],
+    const user = await users.findOne({
+      where: { user_id: userId },
     });
 
-    return items.map(item => {
-      return {
-        purchase_id: item.purchase_id, 
-        ref_no: item.ref_no, 
-        item_id: item.item_id,
-        supplier_id: item.supplier_id,
-        quantity: item.quantity,
-        supp_invoice_no: item.supp_invoice_no,
-        invoice_date: item.invoice_date,
-        delivery_date: item.delivery_date,
-        purchase_type: item.purchase_type,
-        fx_rate: item.fx_rate,
-        fx_symbol: item.fx_symbol,
-        fx_amount: item.fx_amount,
-        unit_price: item.unit_price,
-        total_price: item.total_price,
-        doc_type: item.doc_type,
-        qty_balance: item.qty_balance,
-        received_location: item.received_location,
-        warrant_info: item.warrant_info,
-        created_at: item.created_at,
-        created_by: item.created_by,
-        status: item.status,
-        itemName: item.itemId ? item.itemId.item_name : null, 
-        itemUnit: item.itemId ? item.itemId.unit : null, 
-        received_location_name: item.receivedLocation ? item.receivedLocation.location_name : null, 
-        supplier_name: item.supplieredBy ? item.supplieredBy.sup_name : null, 
-        
-      };
+    if (!user) throw new Error('User not found');
+
+    const includeOptions = [
+      {
+        model: item_master,
+        as: 'itemId',
+        attributes: ['item_name', 'unit'],
+      },
+      {
+        model: users,
+        as: 'createdBy',
+        attributes: ['username'],
+      },
+      {
+        model: locations,
+        as: 'receivedLocation',
+        attributes: ['location_name'],
+      },
+      {
+        model: suppliers,
+        as: 'supplieredBy',
+        attributes: ['sup_name'],
+      },
+      {
+        model: division_detail,
+        as: 'divisionDetail',
+        attributes: ['division_name', 'division_id'],
+      },
+    ];
+
+    // If the user is NOT an admin, apply division filter
+    if (user.role !== 'admin') {
+      const divisionInclude = includeOptions.find(i => i.as === 'divisionDetail');
+      divisionInclude.where = { division_id: user.division };
+    }
+
+    const items = await purchase_entry.findAll({
+      attributes: [
+        'purchase_id', 'ref_no', 'item_id', 'supplier_id', 'quantity', 'supp_invoice_no',
+        'invoice_date', 'delivery_date', 'purchase_type', 'fx_rate', 'fx_symbol', 'fx_amount',
+        'unit_price', 'total_price', 'qty_balance', 'doc_type', 'received_location',
+        'warrant_info', 'status', 'created_at', 'created_by'
+      ],
+      include: includeOptions,
     });
+
+    return items.map(item => ({
+      purchase_id: item.purchase_id,
+      ref_no: item.ref_no,
+      item_id: item.item_id,
+      supplier_id: item.supplier_id,
+      quantity: item.quantity,
+      supp_invoice_no: item.supp_invoice_no,
+      invoice_date: item.invoice_date,
+      delivery_date: item.delivery_date,
+      purchase_type: item.purchase_type,
+      fx_rate: item.fx_rate,
+      fx_symbol: item.fx_symbol,
+      fx_amount: item.fx_amount,
+      unit_price: item.unit_price,
+      total_price: item.total_price,
+      doc_type: item.doc_type,
+      qty_balance: item.qty_balance,
+      received_location: item.received_location,
+      warrant_info: item.warrant_info,
+      created_at: item.created_at,
+      created_by: item.created_by,
+      status: item.status,
+      itemName: item.itemId?.item_name || null,
+      itemUnit: item.itemId?.unit || null,
+      received_location_name: item.receivedLocation?.location_name || null,
+      division: item.divisionDetail?.division_name || null,
+      supplier_name: item.supplieredBy?.sup_name || null,
+    }));
   } catch (error) {
     throw new Error(`Error fetching adjusted items: ${error.message}`);
   }
 };
+
+
 
 exports.getPurchaseById = async (id) => {
   try {
@@ -160,6 +178,7 @@ exports.createPurchaseEntry = async (data) => {
         item_id: data.item_id,
         supplier_id: data.supplier_id,
         received_location: data.received_location,
+        division: data.division,
         quantity: purchaseQty,
         supp_invoice_no: data.supp_invoice_no,
         invoice_date: data.invoice_date,

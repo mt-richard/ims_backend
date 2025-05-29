@@ -1,4 +1,4 @@
-const { stock_adjustments, divisions } = require('../models');
+const { stock_adjustments, division_detail } = require('../models');
 
 exports.getStockAdjustments = async (filters, user) => {
   try {
@@ -11,7 +11,7 @@ exports.getStockAdjustments = async (filters, user) => {
     const adjustments = await stock_adjustments.findAll({
       where: whereClause,
       include: [
-        { model: divisions, as: 'divisionId', attributes: ['division_name'] },
+        { model: division_detail, as: 'divisionId', attributes: ['division_name'] },
       ],
     });
 

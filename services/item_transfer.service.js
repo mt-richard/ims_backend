@@ -1,4 +1,4 @@
-const { item_transfer, item_master, locations, divisions, users, sequelize } = require('../models');
+const { item_transfer, item_master, locations, division_detail, users, sequelize } = require('../models');
 
 exports.getAllTransactions = async () => {
   try {
@@ -30,7 +30,7 @@ exports.getAllTransactions = async () => {
           attributes: ['location_name'], 
         },
         {
-          model: divisions,
+          model: division_detail,
           as: 'divisionId', 
           attributes: ['division_name'], 
         },
@@ -64,7 +64,7 @@ exports.getAllTransactions = async () => {
       };
     });
   } catch (error) {
-    throw new Error(`Error fetching inventory items: ${error.message}`);
+    throw new Error(`Error fetching items trnasfers: ${error.message}`);
   }
 };
 
@@ -108,7 +108,7 @@ exports.getAllTransactionsByDiv = async (userId) => {
           attributes: ['location_name'],
         },
         {
-          model: divisions,
+          model: division_detail,
           as: 'divisionId',
           attributes: ['division_name'],
         },
@@ -177,15 +177,15 @@ exports.createTransaction = async (data) => {
     }
 
     // Check if the provided division values exist
-    const fromDivision = await divisions.findOne({
+    const fromDivision = await division_detail.findOne({
       where: { division_id: data.from_division },
     });
-    const toDivision = await divisions.findOne({
+    const toDivision = await division_detail.findOne({
       where: { division_id: data.to_division },
     });
 
     if (!fromDivision || !toDivision) {
-      throw new Error("One or more provided divisions do not exist.");
+      throw new Error("One or more provided division detail do not exist.");
     }
 
     const currentDate = new Date();
@@ -250,11 +250,11 @@ exports.createTransaction = async (data) => {
     const fromLocationIndex = locationData.findIndex(loc => loc.location_id === parseInt(data.from_location, 10));
     if (fromLocationIndex !== -1) {
       if (locationData[fromLocationIndex].qty < quantity) {
-        throw new Error("Insufficient quantity in the from_location.");
+        throw new Error("Insufficient quantity in the from location.");
       }
       locationData[fromLocationIndex].qty -= quantity;
     } else {
-      throw new Error("from_location not found in the location data.");
+      throw new Error("from location not found in the location data.");
     }
 
     // Update the location JSON field for to_location

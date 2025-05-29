@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         as: 'location_use',
       });
       
-      this.belongsTo(models.divisions, {
+      this.belongsTo(models.division_detail, {
         foreignKey: 'division',
         as: 'division_belong',
       });
@@ -66,7 +66,7 @@ module.exports = (sequelize, DataTypes) => {
     division: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'divisions',
+        model: 'division_detail',
         key: 'division_id',
       },
     },

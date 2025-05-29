@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class suppliers extends Model {
+  class division_detail extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      
+
       this.belongsTo(models.users, {
         foreignKey: 'created_by',
         as: 'createdBy',
@@ -20,47 +22,41 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'updated_by',
         as: 'updatedBy',
       });
-
-      this.belongsTo(models.division_detail, {
-        foreignKey: 'division',
-        as: 'divisionDetail',
-      });
     }
   }
-  suppliers.init({
-    sup_id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER
+  division_detail.init({
+    division_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,  
+      autoIncrement: true 
     },
-    sup_name: DataTypes.STRING,
-    contact: DataTypes.STRING,
-    address: DataTypes.STRING,
-    sup_type: DataTypes.STRING,
-    currency: DataTypes.STRING,
-    division:{
+    division_name: DataTypes.STRING,
+    division_code: DataTypes.STRING,
+    status: DataTypes.ENUM('active', 'inactive'),
+    created_at: DataTypes.DATE,
+    created_by: {
       type: DataTypes.INTEGER,
       references: {
-        model: "division_detail",
-        key: "division_id",
-      },
+        model: 'users', 
+        key: 'user_id'
+      }
     },
-    status: DataTypes.STRING,
-    created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
-    created_by: DataTypes.INTEGER,
-    updated_by: DataTypes.INTEGER
+    updated_by: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'users', 
+        key: 'user_id'
+      }
+    }
   }, {
     sequelize,
-    modelName: 'suppliers',
+    modelName: 'division_detail',
     timestamps: true, 
     createdAt: 'created_at',
     updatedAt: 'updated_at', 
     underscored: true, 
     freezeTableName: true,  
-    primaryKey: 'sup_id'
-
   });
-  return suppliers;
+  return division_detail;
 };

@@ -2,7 +2,8 @@ const PurchaseEntryService = require("../services/purchase_entry.service");
 
 exports.getPurchaseEntries = async (req, res) => {
   try {
-    const items = await PurchaseEntryService.getAllPurchases();
+    // const isAdmin = req.user.role === 'admin';
+    const items = await PurchaseEntryService.getAllPurchases(req.user.id);
     res.json(items);
   } catch (error) {
     res.status(500).json({ message: error.message });

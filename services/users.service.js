@@ -1,4 +1,4 @@
-const { users, otps, divisions } = require("../models");
+const { users, otps, division_detail } = require("../models");
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -13,7 +13,7 @@ exports.getAllUsers = async () => {
     const items = await users.findAll({
       include: [
         {
-          model: divisions,
+          model: division_detail,
           as: 'division_belong', 
           attributes: ['division_name'], 
         },
@@ -37,7 +37,7 @@ exports.getAllUsers = async () => {
       };
     });
   } catch (error) {
-    throw new Error(`Error fetching suppliers: ${error.message}`);
+    throw new Error(`Error fetching users: ${error.message}`);
   } 
 };
 

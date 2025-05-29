@@ -1,12 +1,13 @@
 const express = require('express');
-const { getStockAdjustments, createStockAdjustment } = require('../controllers/stockAdjustmentController');
+const { getStockAdjustments, createStockAdjustment, editStockAdjustment, approveAdjustment, rejectAdjustment } = require('../controllers/stockAdjustmentController');
+const { authenticateToken } = require('../middleWares/authMiddleWare');
 const router = express.Router();
 
-router.get('/', getStockAdjustments);
+router.get('/', authenticateToken, getStockAdjustments);
 // router.get('/:id', getMovementById);
 router.post('/add', createStockAdjustment );
-// router.delete('/delete/:id', deleteUser);
-// router.put('/restore/:id', restoreUser);
-// router.put('/edit/:id', editUser);
+router.put('/approve/:id',authenticateToken, approveAdjustment);
+router.put('/reject/:id', authenticateToken, rejectAdjustment);
+router.put('/edit/:id', editStockAdjustment);
 
 module.exports = router;

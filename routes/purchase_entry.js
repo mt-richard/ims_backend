@@ -1,8 +1,9 @@
 const express = require('express');
 const { getPurchaseEntries, createPurchaseEntry } = require('../controllers/purchaseEntryController');
+const { authenticateToken } = require('../middleWares/authMiddleWare');
 const router = express.Router();
 
-router.get('/', getPurchaseEntries);
+router.get('/', authenticateToken, getPurchaseEntries);
 // router.get('/:id', getMovementById);
 router.post('/add', createPurchaseEntry );
 // router.delete('/delete/:id', deleteUser);

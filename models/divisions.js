@@ -16,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         as: 'location',
       });
 
+      this.belongsTo(models.division_detail, {
+        foreignKey: 'division_detail', 
+        as: 'DivisionDetail',
+      });
+
       this.belongsTo(models.users, {
         foreignKey: 'created_by',
         as: 'createdBy',
@@ -33,9 +38,20 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,  
       autoIncrement: true 
     },
-    division_name: DataTypes.STRING,
-    division_code: DataTypes.INTEGER,
-    location_id: DataTypes.INTEGER,
+    division_detail:{
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'division_detail', 
+        key: 'division_id'
+      }
+    },
+    location_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'locations',
+        key: 'location_id' 
+      }
+    },
     status: DataTypes.ENUM('active', 'inactive'),
     created_at: DataTypes.DATE,
     created_by: {

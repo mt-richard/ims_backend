@@ -1,4 +1,4 @@
-const { employees, locations, divisions } = require('../models');
+const { employees, locations, division_detail } = require('../models');
 const { Op } = require('sequelize');
 const xlsx = require('xlsx');
 
@@ -12,7 +12,7 @@ exports.getAllEmployees = async () => {
           attributes: ['location_name'],
         },
         {
-          model: divisions,
+          model: division_detail,
           as: 'division_belong',
           attributes: ['division_name'],
         },

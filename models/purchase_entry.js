@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "received_location",
         as: "receivedLocation",
       });
+      this.belongsTo(models.division_detail, {
+        foreignKey: "division",
+        as: "divisionDetail",
+      });
     }
   }
   purchase_entry.init(
@@ -69,6 +73,13 @@ module.exports = (sequelize, DataTypes) => {
         references: {
           model: "locations",
           key: "location_id",
+        },
+      },
+      division: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: "division_detail",
+          key: "division_id",
         },
       },
       fx_rate: DataTypes.DECIMAL,

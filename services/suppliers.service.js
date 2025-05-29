@@ -1,4 +1,4 @@
-const { suppliers, divisions } = require('../models');
+const { suppliers, division_detail } = require('../models');
 const { Op } = require('sequelize');
 
 exports.getAllSuppliers = async () => {
@@ -6,8 +6,8 @@ exports.getAllSuppliers = async () => {
     const items = await suppliers.findAll({
       include: [
         {
-          model: divisions,
-          as: 'sup_division', 
+          model: division_detail,
+          as: 'divisionDetail', 
           attributes: ['division_name'], 
         },
       ],
@@ -28,7 +28,7 @@ exports.getAllSuppliers = async () => {
         updated_at: item.updated_at,
         created_by: item.created_by,
         updated_by: item.updated_by,
-        division_name: item.sup_division ? item.sup_division.division_name : null, 
+        division_name: item.divisionDetail ? item.divisionDetail.division_name : null, 
       };
     });
   } catch (error) {

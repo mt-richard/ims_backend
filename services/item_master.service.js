@@ -1,4 +1,4 @@
-const { item_master, item_categories, sub_categories, users, locations,divisions, suppliers, sequelize } = require('../models');
+const { item_master, item_categories, sub_categories, users, locations,division_detail, suppliers, sequelize } = require('../models');
 
 exports.getAllItemsInStock = async () => {
   try {
@@ -20,7 +20,7 @@ exports.getAllItemsInStock = async () => {
           attributes: ['location_name'],
         },
         {
-          model: divisions,
+          model: division_detail,
           as: 'division_belong',
           attributes: ['division_name'],
         },
@@ -92,7 +92,7 @@ exports.getItemsInStockByDiv = async (userId) => {
           attributes: ['location_name'],
         },
         {
-          model: divisions,
+          model: division_detail,
           as: 'division_belong',
           attributes: ['division_name'],
         },
