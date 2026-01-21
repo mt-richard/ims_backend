@@ -122,7 +122,7 @@ exports.restoreUser = async (id) => {
 };
 
 
-exports.editUser = async (user_id, username, email, role, status) => {
+exports.editUser = async (user_id, username, email, role, division, status) => {
   try {
     let userData = await users.findByPk(user_id);
 
@@ -137,6 +137,7 @@ exports.editUser = async (user_id, username, email, role, status) => {
       typeof email !== "string" ||
       // typeof password !== "string" ||
       typeof role !== "string" ||
+      typeof division !== "string" ||
       typeof status !== "string"
     ) {
       throw new Error("Invalid input: All fields must be strings.");
@@ -150,6 +151,7 @@ exports.editUser = async (user_id, username, email, role, status) => {
     // }
 
     userData.role = role;
+    userData.division = division;
     userData.status = status;
 
     await userData.save();

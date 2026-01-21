@@ -2,7 +2,7 @@ const { item_master, license_master } = require('../models');
 const { Op } = require('sequelize'); // Import Op for Sequelize operators
 
 exports.getAssetInUse = async () => {
-  const assetsInUse = await item_master.findAll({ where: { item_status: 'in_use' } });
+  const assetsInUse = await item_master.findAll({ where: { item_status: 'in-use' } });
   return {
     count: assetsInUse.length,
     details: assetsInUse,
@@ -17,7 +17,15 @@ exports.getAssetInstock = async () => {
   };
 };
 
-exports.getAssetscrapped = async () => {
+exports.getAssetDamaged = async () => {
+  const assetsDamaged = await item_master.findAll({ where: { item_status: 'damaged' } });
+  return {
+    count: assetsDamaged.length,
+    details: assetsDamaged,
+  };
+};
+
+exports.getAssetScrapped = async () => {
   const assetsScrapped = await item_master.findAll({ where: { item_status: 'scrapped' } });
   return {
     count: assetsScrapped.length,

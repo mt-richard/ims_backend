@@ -18,9 +18,18 @@ exports.getAssetInstock = async (req, res) => {
   }
 };
 
-exports.getAssetscrapped = async (req, res) => {
+exports.getAssetDamaged = async (req, res) => {
   try {
-    const result = await dashboardService.getAssetscrapped();
+    const result = await dashboardService.getAssetDamaged();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getAssetScrapped = async (req, res) => {
+  try {
+    const result = await dashboardService.getAssetScrapped();
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });

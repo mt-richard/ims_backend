@@ -132,6 +132,7 @@ exports.getItemsInStockByDiv = async (userId) => {
       category_name: item.category?.description || null,
       sup_name: item.supplier?.sup_name || null,
       location_name: item.location_use?.location_name || null,
+      division_name: item.division_belong?.division_name || null,
       item_type: item.item_type,
     }));
   } catch (error) {

@@ -13,11 +13,11 @@ module.exports = {
       category_name: {
         type: Sequelize.STRING
       },
-      perfix: {
+      prefix: {
         type: Sequelize.STRING
       },
       
-      desription: {
+      description: {
         type: Sequelize.TEXT
       },
       status: {
