@@ -23,10 +23,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'location',
         as: 'location_use',
       });
-      
+
       this.belongsTo(models.division_detail, {
         foreignKey: 'division',
         as: 'division_belong',
+      });
+
+      this.hasMany(models.item_specifications, {
+        foreignKey: 'item_id',
+        as: 'specifications',
       });
 
       this.belongsTo(models.users, {

@@ -1,6 +1,7 @@
 const express = require('express')  
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const specification_fields = require('./models/specification_fields')
 const app = express()
 const port = 4500
 
@@ -32,6 +33,8 @@ app.use('/item_assign', require('./routes/item_assign'))
 app.use('/item_details', require('./routes/item_details'))
 app.use('/employees', require('./routes/employees'))
 app.use('/dashboard', require('./routes/dashboard'))
+app.use('/specification_fields', require('./routes/specification_fields'))
+app.use('/item_specifications', require('./routes/item_specifications'))
 // app.use('/user_activity', require('./routes/user_activity'))
 
 app.get('/', (req, res) =>{
