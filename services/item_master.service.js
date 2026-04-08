@@ -7,7 +7,7 @@ exports.getAllItemsInStock = async () => {
         {
           model: sub_categories,
           as: 'category',
-          attributes: ['description'],
+          attributes: ['description','category_id'],
         },
         {
           model: suppliers,
@@ -31,6 +31,7 @@ exports.getAllItemsInStock = async () => {
     return items.map(item => {
       return {
         item_id: item.item_id,
+        sub_category_id: item.sub_category_id,
         item_category: item.item_category,
         item_name: item.item_name,
         description: item.description,
@@ -55,6 +56,7 @@ exports.getAllItemsInStock = async () => {
         created_by: item.created_by,
         updated_by: item.updated_by,
         category_name: item.category ? item.category.description : null,
+        category_id: item.category ? item.category.category_id : null,
         sup_name: item.supplier ? item.supplier.sup_name : null,
         location_name: item.location_use ? item.location_use.location_name : null,
         item_type: item.item_type,
@@ -79,7 +81,7 @@ exports.getItemsInStockByDiv = async (userId) => {
         {
           model: sub_categories,
           as: 'category',
-          attributes: ['description'],
+          attributes: ['description','category_id'],
         },
         {
           model: suppliers,
@@ -109,7 +111,7 @@ exports.getItemsInStockByDiv = async (userId) => {
 
     return items.map(item => ({
       item_id: item.item_id,
-      item_category: item.item_category,
+      sub_category_id: item.sub_category_id,
       item_name: item.item_name,
       description: item.description,
       cost: item.cost,
@@ -130,6 +132,7 @@ exports.getItemsInStockByDiv = async (userId) => {
       created_by: item.created_by,
       updated_by: item.updated_by,
       category_name: item.category?.description || null,
+      category_id: item.category?.category_id || null,
       sup_name: item.supplier?.sup_name || null,
       location_name: item.location_use?.location_name || null,
       item_type: item.item_type,
@@ -156,6 +159,58 @@ exports.getByName = async (name) => {
   }
 };
 
+// exports.createItems = async (data) => {
+//   const transaction = await sequelize.transaction();
+
+//   try {
+//     const category = await item_categories.findOne({
+//       where: { category_id: data.item_category },
+//       attributes: ['category_name', 'prefix'],
+//       transaction,
+//     });
+
+//     if (!category) {
+//       throw new Error("Category not found.");
+//     }
+
+//     const categoryPrefix = category.prefix;
+
+//     const subCategory = await sub_categories.findOne({
+//       where: { sub_cat_id: data.sub_category_id },
+//       attributes: ['description', 'prefix', 'sec_num'],
+//       transaction,
+//     });
+
+
+//     if (!subCategory) {
+//       throw new Error("Subcategory not found.");
+//     }
+
+//     const subCategoryPrefix = subCategory.prefix;
+//     const secNum = subCategory.sec_num + 1;
+
+//     const assetId = `ABG${categoryPrefix}${subCategoryPrefix}${secNum}`;
+
+//     await sub_categories.update(
+//       { sec_num: secNum },
+//       { where: { sub_cat_id: data.sub_category_id }, transaction }
+//     );
+
+//     const itemData = {
+//       ...data,
+//       asset_id: assetId,
+//     };
+
+//     const response = await item_master.create(itemData, { transaction });
+
+//     await transaction.commit();
+//     return { message: "Item added successfully", item: response };
+//   } catch (error) {
+//     await transaction.rollback();
+//     throw new Error(`Error creating item: ${error.message}`);
+//   }
+// };
+
 exports.createItems = async (data) => {
   const transaction = await sequelize.transaction();
 
@@ -177,7 +232,6 @@ exports.createItems = async (data) => {
       attributes: ['description', 'prefix', 'sec_num'],
       transaction,
     });
-
 
     if (!subCategory) {
       throw new Error("Subcategory not found.");
@@ -201,59 +255,112 @@ exports.createItems = async (data) => {
     const response = await item_master.create(itemData, { transaction });
 
     await transaction.commit();
-    return { message: "Item added successfully", item: response };
+
+    return {
+      message: "Item added successfully",
+      item_id: response.item_id,   
+      item: response              
+    };
+
   } catch (error) {
     await transaction.rollback();
     throw new Error(`Error creating item: ${error.message}`);
   }
 };
 
-exports.deleteSupplier = async (id) => {
+exports.deleteItem = async (id) => {
   try {
     let response = await item_master.findByPk(id);
     if (!response) {
-      const error = new Error(`Supplier not found with id: ${id}`);
+      const error = new Error(`Item not found with id: ${id}`);
       error.statusCode = 404;
       throw error;
     }
     response.status = 'inactive';
     await response.save();
-    return { message: "Supplier deleted successfully", supplier: response };
+    return { message: "Item deleted successfully", item: response };
   } catch (error) {
-    throw new Error(`Error deleting supplier: ${error.message}`);
+    throw new Error(`Error deleting item: ${error.message}`);
   }
 };
 
-exports.restoreSupplier = async (id) => {
+exports.restoreItem = async (id) => {
   try {
     let response = await item_master.findByPk(id);
     if (!response) {
-      const error = new Error(`Supplier not found with id: ${id}`);
+      const error = new Error(`Item not found with id: ${id}`);
       error.statusCode = 404;
       throw error;
     }
     response.status = 'active';
     await response.save();
-    return { message: "Supplier restored successfully", supplier: response };
+    return { message: "Item restored successfully", item: response };
   } catch (error) {
-    throw new Error(`Error restoring item_master: ${error.message}`);
+    throw new Error(`Error restoring item: ${error.message}`);
   }
 };
 
-exports.editSupplier = async (id, name, contact, status) => {
+
+exports.updateItem = async (itemId, data) => {
+  const transaction = await sequelize.transaction();
+
   try {
-    let supplierData = await item_master.findByPk(id);
-    if (!supplierData) {
-      const error = new Error(`Supplier not found with id: ${id}`);
-      error.statusCode = 404;
-      throw error;
+    // Check if item exists
+    const existingItem = await item_master.findOne({
+      where: { item_id: itemId },
+      transaction,
+    });
+
+    if (!existingItem) {
+      throw new Error("Item not found.");
     }
-    supplierData.sup_name = name;
-    supplierData.contact = contact;
-    supplierData.status = status;
-    await supplierData.save();
-    return { message: "Supplier updated successfully", supplier: supplierData };
+
+    // Whitelist allowed fields
+    const allowedFields = [
+      "item_name",
+      "description",
+      "item_type",
+      "item_category",
+      "sub_category_id",
+      "unit",
+      "division",
+      "license_start_time",
+      "license_expire_time"
+    ];
+
+    const updateData = {};
+    for (const key of allowedFields) {
+      if (data[key] !== undefined) {
+        updateData[key] = data[key];
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      throw new Error("No valid fields provided to update.");
+    }
+
+    // Perform update
+    await item_master.update(updateData, {
+      where: { item_id: itemId },
+      transaction,
+    });
+
+    // Fetch updated item
+    const updatedItem = await item_master.findOne({
+      where: { item_id: itemId },
+      transaction,
+    });
+
+    await transaction.commit();
+
+    return {
+      success: true,
+      message: "Item updated successfully",
+      item: updatedItem,
+    };
+
   } catch (error) {
-    throw new Error(`Error updating supplier: ${error.message}`);
+    await transaction.rollback();
+    throw new Error(`Error updating item: ${error.message}`);
   }
 };

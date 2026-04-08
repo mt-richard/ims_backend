@@ -1,4 +1,4 @@
-const ItemMasterService = require('../services/item_master.service');
+const ItemMasterService = require('../services/item_master.service.js');
 
 exports.getItemsInStock = async (req, res) => {
   try {
@@ -35,11 +35,11 @@ exports.getItemById = async (req, res) => {
     }
 }
 
-  exports.deleteSupplier = async (req, res) => {
+  exports.deleteItem = async (req, res) => {
     try {
       const id = req.params.id;
-      const supData = await ItemMasterService.deleteSupplier(id);
-      res.status(200).json(supData);
+      const itemData = await ItemMasterService.deleteItem(id);
+      res.status(200).json(itemData);
     } catch (error) {
       if (error.statusCode) {
         res.status(error.statusCode).json({
@@ -53,11 +53,11 @@ exports.getItemById = async (req, res) => {
     }
   };
 
-  exports.restoreSupplier = async (req, res) => {
+  exports.restoreItem = async (req, res) => {
     try {
       const id = req.params.id;
-      const supData = await ItemMasterService.restoreSupplier(id);
-      res.status(200).json(supData);
+      const itemData = await ItemMasterService.restoreItem(id);
+      res.status(200).json(itemData);
     } catch (error) {
       if (error.statusCode) {
         res.status(error.statusCode).json({
@@ -71,21 +71,27 @@ exports.getItemById = async (req, res) => {
     }
   };
 
-  exports.editSupplier = async (req, res) => {
-    try {
-      const id = req.params.id;
-      const { sup_name, contact, status } = req.body
-      const supData = await ItemMasterService.editSupplier(id, sup_name, contact, status);
-      res.status(200).json(supData);
-    } catch (error) {
-      if (error.statusCode) {
-        res.status(error.statusCode).json({
-          status: error.statusCode,
-          error: error.message,
-          
-        });
-      } else {
-        res.status(500).json({ message: error.message });
-      }
+
+exports.updateItem = async (req, res) => {
+  try {
+    const itemId = req.params.id; // matches route /item_master/edit/:id
+    const payload = req.body;
+
+    const result = await ItemMasterService.updateItem(itemId, payload);
+
+    return res.status(200).json(result);
+
+  } catch (error) {
+    if (error.message.includes("Item not found")) {
+      return res.status(404).json({ success: false, message: error.message });
     }
-  };
+    if (error.message.includes("No valid fields")) {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update item",
+    });
+  }
+};

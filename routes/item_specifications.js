@@ -2,7 +2,7 @@ const express = require('express');
 const { getSpecsByItem, createSpecs, deleteSpecs, updateSpecs, restoreSpecs } = require('../controllers/item_specifications.controller');
 const router = express.Router();
 
-router.get('/:id', getSpecsByItem);
+router.get('/:item_id', getSpecsByItem);
 router.post('/add', createSpecs);
 router.delete('/delete/:id', deleteSpecs);
 router.put('/restore/:id', restoreSpecs);
