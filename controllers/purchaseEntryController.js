@@ -11,15 +11,35 @@ exports.getPurchaseEntries = async (req, res) => {
 };
 
 
+// exports.createPurchaseEntry = async (req, res) => {
+//   try {
+//     const data = req.body; // Get request data
+//     const result = await PurchaseEntryService.createPurchaseEntry(data);
+
+//     return res.status(201).json({
+//       success: true,
+//       message: result.message,
+//       data: result.item
+//     });
+
+//   } catch (error) {
+//     return res.status(500).json({
+//       success: false,
+//       message: `Error creating purchase entry: ${error.message}`
+//     });
+//   }
+// };
+
 exports.createPurchaseEntry = async (req, res) => {
   try {
-    const data = req.body; // Get request data
+    const data = req.body;
+
     const result = await PurchaseEntryService.createPurchaseEntry(data);
 
     return res.status(201).json({
       success: true,
       message: result.message,
-      data: result.item
+      data: result.items, // ✅ changed
     });
 
   } catch (error) {
